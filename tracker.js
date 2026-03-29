@@ -41,7 +41,7 @@ function rpcPost(url, method, params) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 })
-  }).then(r => JSON.parse(r.body));
+  }).then(r => { try { return JSON.parse(r.body); } catch(e) { throw new Error(`RPC parse error: ${e.message}`); } });
 }
 
 async function getNativeBalance(chainConfig, wallet) {
@@ -111,7 +111,9 @@ async function main() {
     const url = `https://api.ethplorer.io/getAddressHistory/${wallet}?apiKey=freekey&type=transfer&limit=30`;
     const res = await httpReq(url);
     if (res.status === 200) {
-      const ops = JSON.parse(res.body).operations || [];
+      let data;
+      try { data = JSON.parse(res.body); } catch(e) { console.error('Failed to parse Ethplorer response:', e.message); return; }
+      const ops = data.operations || [];
       const knownSet = new Set(state.knownTokens || []);
       for (const op of ops) {
         if (op.type === 'transfer' && op.to?.toLowerCase() === wallet.toLowerCase()) {
