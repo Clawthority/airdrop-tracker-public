@@ -85,7 +85,17 @@ function loadState() {
   catch(e) { return { knownTokens: [], lastCheck: null, nativeBalances: {}, protocolBalances: {} }; }
 }
 
-function saveState(state) { fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2)); }
+function saveState(state) {
+  // Prune knownTokens older than 30 days to prevent unbounded growth
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  if (Array.isArray(state.knownTokens)) {
+    state.knownTokens = state.knownTokens.filter(entry => {
+      if (typeof entry === 'string') return true; // legacy format, keep
+      return (entry.ts || Infinity) > cutoff;
+    });
+  }
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+}
 
 async function main() {
   const state = loadState();
