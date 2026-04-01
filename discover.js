@@ -9,7 +9,19 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'));
+const CONFIG_PATH = path.join(__dirname, 'config.json');
+let CONFIG;
+try {
+  if (!fs.existsSync(CONFIG_PATH)) {
+    console.error(`Config not found: ${CONFIG_PATH}`);
+    console.error('Copy config.example.json to config.json and edit it.');
+    process.exit(1);
+  }
+  CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+} catch (e) {
+  console.error(`Failed to load config: ${e.message}`);
+  process.exit(1);
+}
 const WALLET = CONFIG.wallet;
 
 const CHAIN_RPCS = {};

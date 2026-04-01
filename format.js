@@ -2,7 +2,10 @@
 const chunks = [];
 process.stdin.on('data', chunk => chunks.push(chunk));
 process.stdin.on('end', () => {
-  const r = JSON.parse(chunks.join(''));
+  const raw = chunks.join('').trim();
+  if (!raw) { console.error('No input received'); process.exit(1); }
+  let r;
+  try { r = JSON.parse(raw); } catch (e) { console.error(`Invalid JSON input: ${e.message}`); process.exit(1); }
   const lines = [];
   lines.push(`🔍 **Airdrop Tracker**`);
   lines.push(`📅 ${new Date(r.timestamp).toLocaleString()}`);
