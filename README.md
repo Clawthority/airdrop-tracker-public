@@ -95,6 +95,12 @@ openclaw cron add \
   --announce --channel telegram
 ```
 
+## Related Products
+
+- **[Scam Academy](../scam-academy)** — Learn to spot scams with interactive simulations
+- **[Scam Shield](../scam-shield)** — Check suspicious messages, links, and crypto addresses
+- **[Crypto Alpha Feed](../crypto-alpha-feed)** — Blog/RSS monitoring for airdrop announcements
+
 ## License
 
 MIT
